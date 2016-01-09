@@ -1,0 +1,17 @@
+<script src="{{url_for('static', filename='js/socket.io-1.4.3.js')}}"></script>
+
+<h1>Flask SQLAlchemy and SocketIO demo</h1>
+
+<h3>Updates</h3>
+<ul>
+    {% for update in updates %}
+    <li>{{update.msg}} at {{update.timestamp}}</li>
+    {% endfor %}
+</ul>
+
+<script>
+    var socket = io.connect();
+    socket.on('connect', function() {
+        console.log('SocketIO connected.');
+    });
+</script>
