@@ -11,7 +11,14 @@
 
 <script>
     var socket = io.connect();
+    document.onbeforeunload = function() {
+        console.log('Disconnecting from SocketIO ...');
+        socket.disconnect();
+    }
     socket.on('connect', function() {
         console.log('SocketIO connected.');
+    });
+    socket.on('new_update', function(data) {
+        console.log(data);
     });
 </script>

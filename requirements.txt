@@ -1,3 +1,4 @@
 blinker
 Flask-Migrate
 Flask-SocketIO
+redis

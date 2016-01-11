@@ -16,5 +16,5 @@ pip install -r requirements.txt
 
 ### Test functionality
 ```
-./main.py add_update
+./main.py add
 ```
