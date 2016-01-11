@@ -4,7 +4,6 @@ Demo in a single file
 """
 
 import datetime
-import threading
 
 import flask
 from flask.ext import migrate as flask_migrate
@@ -69,35 +68,50 @@ def on_disconnect():
 
 ### Redis
 
-class RedisListener(threading.Thread):
-    def __init__(self, channels):
-        threading.Thread.__init__(self)
-        self.redis = redis.StrictRedis()
-        self.pubsub = self.redis.pubsub()
-        self.pubsub.subscribe(channels)
-
-    def work(self, item):
-        print 'REDIS -', item['channel'], ":", item['data']
-        with app.app_context():
-            print 'Sending to SocketIO ...'
-            socketio.emit('new_update', item['data'])
-
-    def run(self):
-        for item in self.pubsub.listen():
-            if item['data'] == "KILL":
-                self.pubsub.unsubscribe()
-                print self, "unsubscribed and finished"
-                break
-            elif item['data'] != 1:
-                self.work(item)
+def listen_redis():
+    r = redis.StrictRedis()
+    pubsub = r.pubsub()
+    pubsub.subscribe(['new_update'])
+    for item in pubsub.listen():
+        if item['data'] == "KILL":
+            self.pubsub.unsubscribe()
+            print 'REDIS - unsubscribed and finished'
+            break
+        elif item['data'] != 1:
+            print 'REDIS -', item['channel'], ":", item['data']
+            with app.app_context():
+                print 'Sending to SocketIO ...'
+                socketio.emit('new_update', item['data'])
 
 
 ### Commands
 
 @manager.command
 def run_socketio():
-    client = RedisListener(['new_update'])
-    client.start()
+    create_thread_func = None
+    start_thread_func = None
+    try:
+        import eventlet
+        eventlet.monkey_patch()
+        print 'Using eventlet'
+        create_thread_func = lambda f: f
+        start_thread_func = lambda f: eventlet.spawn(f)
+    except ImportError:
+        try:
+            import gevent
+            import gevent.monkey
+            gevent.monkey.patch_all()
+            print 'Using gevent'
+            create_thread_func = lambda f: gevent.Greenlet(f)
+            start_thread_func = lambda t: t.start()
+        except ImportError:
+            import threading
+            print 'Using threading'
+            create_thread_func = lambda f: threading.Thread(target=f)
+            start_thread_func = lambda t: t.start()
+
+    thread = create_thread_func(listen_redis)
+    start_thread_func(thread)
 
     try:
         socketio.run(app, host='0.0.0.0')
