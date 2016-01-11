@@ -2,8 +2,10 @@
 
 <h1>Flask SQLAlchemy and SocketIO demo</h1>
 
+<a href='/delete'>Delete all updates</a>
+
 <h3>Updates</h3>
-<ul>
+<ul id="update-list">
     {% for update in updates %}
     <li>{{update.msg}} at {{update.timestamp}}</li>
     {% endfor %}
@@ -19,6 +21,8 @@
         console.log('SocketIO connected.');
     });
     socket.on('new_update', function(data) {
-        console.log(data);
+        var el = document.createElement('li');
+        el.innerHTML = data;
+        document.getElementById("update-list").appendChild(el);
     });
 </script>

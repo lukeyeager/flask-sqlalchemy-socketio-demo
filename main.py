@@ -4,6 +4,7 @@ Demo in a single file
 """
 
 import datetime
+import json
 
 import flask
 from flask.ext import migrate as flask_migrate
@@ -24,6 +25,16 @@ def index():
     updates = Update.query.all()
     return flask.render_template('index.html', updates=updates)
 
+@app.route('/delete')
+def delete():
+    delete_all_updates()
+    return flask.redirect(flask.url_for('index'))
+
+def delete_all_updates():
+    """Can be invoked via HTTP or command-line"""
+    Update.query.delete()
+    db.session.commit()
+    print 'Deleted all updates'
 
 ### Flask-Script
 
@@ -80,8 +91,9 @@ def listen_redis():
         elif item['data'] != 1:
             print 'REDIS -', item['channel'], ":", item['data']
             with app.app_context():
+                data = json.loads(item['data'])
                 print 'Sending to SocketIO ...'
-                socketio.emit('new_update', item['data'])
+                socketio.emit('new_update', data['msg'] + ' at ' + data['timestamp'])
 
 
 ### Commands
@@ -114,7 +126,7 @@ def run_socketio():
     start_thread_func(thread)
 
     try:
-        socketio.run(app, host='0.0.0.0')
+        socketio.run(app, host='0.0.0.0', debug=True)
     except KeyboardInterrupt:
         redis.StrictRedis().publish('new_update', 'KILL')
 
@@ -127,15 +139,13 @@ def add():
         db.session.commit()
         print 'Publishing to redis ...'
         r = redis.StrictRedis()
-        r.publish('new_update', {'msg': u.msg, 'timestamp': str(u.timestamp)})
+        r.publish('new_update', json.dumps({'msg': u.msg, 'timestamp': str(u.timestamp)}))
         print 'Added', u
 
 @manager.command
 def delete():
     with app.app_context():
-        Update.query.delete()
-        db.session.commit()
-        print 'Deleted all updates'
+        delete_all_updates()
 
 
 if __name__ == '__main__':
