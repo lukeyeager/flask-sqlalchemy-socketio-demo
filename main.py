@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 """
-Demo in a single file
+Manager for single-file application
 """
 
 import datetime
@@ -14,21 +14,24 @@ import flask_socketio
 import redis
 
 
-### Flask application
+# Flask application
 
 app = flask.Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
 
 @app.route('/')
 def index():
     updates = Update.query.all()
     return flask.render_template('index.html', updates=updates)
 
+
 @app.route('/delete')
-def delete():
+def delete_route():
     delete_all_updates()
     return flask.redirect(flask.url_for('index'))
+
 
 def delete_all_updates():
     """Can be invoked via HTTP or command-line"""
@@ -36,21 +39,24 @@ def delete_all_updates():
     db.session.commit()
     print 'Deleted all updates'
 
-### Flask-Script
+# Flask-Script
 
 manager = flask_script.Manager(app)
 
 
-### Flask-SQLAlchemy
+# Flask-SQLAlchemy
 
 db = sa.SQLAlchemy(app)
+
 
 class Update(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     msg = db.Column(db.String(128))
+
     def __repr__(self):
         return r'<Update "%s" at %s>' % (self.msg, self.timestamp)
+
 
 @sa.models_committed.connect_via(app)
 def on_models_committed(sender, changes):
@@ -58,26 +64,28 @@ def on_models_committed(sender, changes):
         print 'SQLALCHEMY - %s %s' % (change, obj)
 
 
-### Flask-Migrate
+# Flask-Migrate
 
 flask_migrate.Migrate(app, db)
 manager.add_command('db', flask_migrate.MigrateCommand)
 
 
-### SocketIO
+# SocketIO
 
 socketio = flask_socketio.SocketIO(app)
+
 
 @socketio.on('connect')
 def on_connect():
     print 'SocketIO connected.'
+
 
 @socketio.on('disconnect')
 def on_disconnect():
     print 'SocketIO disconnected.'
 
 
-### Redis
+# Redis
 
 def listen_redis():
     r = redis.StrictRedis()
@@ -85,7 +93,7 @@ def listen_redis():
     pubsub.subscribe(['new_update'])
     for item in pubsub.listen():
         if item['data'] == "KILL":
-            self.pubsub.unsubscribe()
+            pubsub.unsubscribe()
             print 'REDIS - unsubscribed and finished'
             break
         elif item['data'] != 1:
@@ -96,10 +104,10 @@ def listen_redis():
                 socketio.emit('new_update', data['msg'] + ' at ' + data['timestamp'])
 
 
-### Commands
+# Commands
 
 @manager.command
-def run_socketio():
+def runserver(debug=False, use_reloader=False):
     create_thread_func = None
     start_thread_func = None
     try:
@@ -126,9 +134,10 @@ def run_socketio():
     start_thread_func(thread)
 
     try:
-        socketio.run(app, host='0.0.0.0', debug=True)
+        socketio.run(app, host='0.0.0.0', debug=debug, use_reloader=use_reloader)
     except KeyboardInterrupt:
         redis.StrictRedis().publish('new_update', 'KILL')
+
 
 @manager.command
 def add():
@@ -141,6 +150,7 @@ def add():
         r = redis.StrictRedis()
         r.publish('new_update', json.dumps({'msg': u.msg, 'timestamp': str(u.timestamp)}))
         print 'Added', u
+
 
 @manager.command
 def delete():
