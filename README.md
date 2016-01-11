@@ -11,10 +11,10 @@ pip install -r requirements.txt
 
 ### Run server
 ```
-./main.py run_socketio
+./manage.py runserver
 ```
 
 ### Test functionality
 ```
-./main.py add
+./manage.py add
 ```
