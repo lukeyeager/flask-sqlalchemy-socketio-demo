@@ -8,6 +8,7 @@ from myapp import config
 from myapp.webserver.webapp import webapp
 from myapp.webserver.socketio import socketio
 
+
 def listen_thread():
     r = redis.StrictRedis()
     pubsub = r.pubsub()
@@ -23,6 +24,7 @@ def listen_thread():
                 data = json.loads(item['data'])
                 print 'Sending to SocketIO ...'
                 socketio.emit('new_update', data['msg'] + ' at ' + data['timestamp'])
+
 
 @webapp.before_first_request
 def start_listener():
@@ -49,8 +51,10 @@ def start_listener():
     thread = create_thread_func(listen_thread)
     start_thread_func(thread)
 
+
 def shutdown_listener():
     redis.StrictRedis().publish(config.REDIS_CHANNEL, 'KILL')
+
 
 def send_update(update):
     redis.StrictRedis().publish(

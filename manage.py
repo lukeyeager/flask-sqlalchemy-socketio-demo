@@ -1,13 +1,7 @@
 #!/usr/bin/env python2
 
-import datetime
-import json
-
-import flask
 from flask.ext import migrate as flask_migrate
 from flask.ext import script as flask_script
-from flask.ext import sqlalchemy as sa
-import flask_socketio
 
 from myapp.database import models
 from myapp.database.adapter import db
@@ -21,9 +15,11 @@ manager = flask_script.Manager(webapp)
 flask_migrate.Migrate(webapp, db)
 manager.add_command('db', flask_migrate.MigrateCommand)
 
+
 @manager.command
 def runserver(debug=False, use_reloader=False):
     socketio.run(webapp, host='0.0.0.0', debug=debug, use_reloader=use_reloader)
+
 
 @manager.command
 def add():
@@ -33,6 +29,7 @@ def add():
         db.session.add(u)
         db.session.commit()
         myapp_redis.send_update(u)
+
 
 @manager.command
 def delete():

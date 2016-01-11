@@ -5,10 +5,12 @@ from myapp.database.adapter import db
 
 blueprint = flask.Blueprint(__name__, __name__)
 
+
 @blueprint.route('/')
 def index():
     updates = Update.query.all()
     return flask.render_template('index.html', updates=updates)
+
 
 @blueprint.route('/delete')
 def delete():
