@@ -40,7 +40,11 @@ def listen_thread():
             with webapp.app_context():
                 data = json.loads(item['data'])
                 print 'Sending to SocketIO ...'
-                socketio.emit('new_update', data['msg'] + ' at ' + data['timestamp'])
+                socketio.emit(
+                    'new_update',
+                    data['msg'] + ' at ' + data['timestamp'],
+                    namespace='/browser',
+                )
 
 
 @webapp.before_first_request

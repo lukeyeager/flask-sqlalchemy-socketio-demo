@@ -12,7 +12,7 @@
 </ul>
 
 <script>
-    var socket = io.connect();
+    var socket = io.connect('/browser');
     document.onbeforeunload = function() {
         console.log('Disconnecting from SocketIO ...');
         socket.disconnect();

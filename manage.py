@@ -8,7 +8,7 @@ from myapp.database.adapter import db
 from myapp.database.models import Update
 from myapp.webserver.socketio import socketio
 from myapp.webserver.webapp import webapp
-from myapp.webserver.zeromq import send_update
+from myapp.webserver.socketio_client import send_update
 
 
 manager = flask_script.Manager(webapp)
@@ -29,6 +29,7 @@ def add():
         db.session.add(u)
         db.session.commit()
         send_update(u)
+    print 'Added.'
 
 
 @manager.command
