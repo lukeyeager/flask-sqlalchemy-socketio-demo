@@ -7,8 +7,6 @@ from myapp.webserver.webapp import webapp
 from myapp.webserver.socketio import socketio
 
 
-# Crazy try/except block for importing
-#   threading and zmq libraries
 try:
     import eventlet
     from eventlet.green import zmq
@@ -67,11 +65,12 @@ def shutdown_listener():
 
 
 def send_update(update):
+    data = {'msg': update.msg, 'timestamp': str(update.timestamp)}
+
     ctx = zmq.Context()
     # Request - act as client
     socket = ctx.socket(zmq.REQ)
     socket.connect('tcp://localhost:%s' % config.ZEROMQ_PORT)
-    data = {'msg': update.msg, 'timestamp': str(update.timestamp)}
     socket.send(json.dumps(data))
     reply = socket.recv()
     print 'ZEROMQ reply -', reply
