@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import flask_socketio
 
 from myapp.webserver.webapp import webapp

@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 import datetime
 
-from adapter import db
+from .adapter import db
 
 
 class Update(db.Model):
