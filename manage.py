@@ -6,9 +6,9 @@ from flask.ext import script as flask_script
 from myapp.database import models
 from myapp.database.adapter import db
 from myapp.database.models import Update
-from myapp.webserver import redis as myapp_redis
 from myapp.webserver.socketio import socketio
 from myapp.webserver.webapp import webapp
+from myapp.webserver.zeromq import send_update
 
 
 manager = flask_script.Manager(webapp)
@@ -28,7 +28,7 @@ def add():
         print 'Committing to database ...'
         db.session.add(u)
         db.session.commit()
-        myapp_redis.send_update(u)
+        send_update(u)
 
 
 @manager.command
