@@ -3,12 +3,12 @@
 from flask.ext import migrate as flask_migrate
 from flask.ext import script as flask_script
 
+from myapp.comm import send_update
 from myapp.database import models
 from myapp.database.adapter import db
 from myapp.database.models import Update
 from myapp.webserver.socketio import socketio
 from myapp.webserver.webapp import webapp
-from myapp.webserver.socketio_client import send_update
 
 
 manager = flask_script.Manager(webapp)

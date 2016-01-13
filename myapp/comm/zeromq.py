@@ -34,7 +34,6 @@ def listen_thread():
     socket = ctx.socket(zmq.REP)
     socket.bind('tcp://*:%s' % config.ZEROMQ_PORT)
     while True:
-        print 'Listening to socket ...'
         request = socket.recv()
         print 'ZEROMQ request -', request
         socket.send('OK')

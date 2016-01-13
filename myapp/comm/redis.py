@@ -10,14 +10,14 @@ from myapp.webserver.socketio import socketio
 
 try:
     import eventlet
-    print 'Using eventlet'
+    print 'Using eventlet for threading'
     eventlet.monkey_patch()
     spawn = eventlet.spawn
 except ImportError:
     try:
         import gevent
         import gevent.monkey
-        print 'Using gevent'
+        print 'Using gevent for threading'
         gevent.monkey.patch_all()
         spawn = lambda f: gevent.Greenlet(f).start()
     except ImportError:
@@ -39,7 +39,6 @@ def listen_thread():
             print 'REDIS -', item['channel'], ":", item['data']
             with webapp.app_context():
                 data = json.loads(item['data'])
-                print 'Sending to SocketIO ...'
                 socketio.emit(
                     'new_update',
                     data['msg'] + ' at ' + data['timestamp'],
