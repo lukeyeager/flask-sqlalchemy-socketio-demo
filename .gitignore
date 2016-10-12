@@ -1,5 +1,7 @@
 # virtualenv
 /venv/
+/venv2/
+/venv3/
 
 # migrate
 app.db
