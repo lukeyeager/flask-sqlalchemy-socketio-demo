@@ -4,9 +4,9 @@ Demo for how to use Flask, SQLAlchemy and SocketIO together
 ### Setup
 ```
 pip install -r requirements.txt
-./main.py db init
-./main.py db migrate
-./main.py db upgrade
+./manage.py db init
+./manage.py db migrate
+./manage.py db upgrade
 ```
 
 #### Asynchronous framework
