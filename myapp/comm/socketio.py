@@ -1,11 +1,7 @@
 from __future__ import absolute_import
 
-import json
-
 import socketIO_client
 
-from myapp import config
-from myapp.webserver.webapp import webapp
 from myapp.webserver.socketio import socketio as socketio_server
 
 

@@ -20,12 +20,16 @@ except ImportError:
         import zmq.green as zmq
         print 'Using gevent'
         gevent.monkey.patch_all()
-        spawn = lambda f: gevent.Greenlet(f).start()
+
+        def spawn(f):
+            gevent.Greenlet(f).start()
     except ImportError:
         import threading
         import zmq
         print 'Using threading'
-        spawn = lambda f: threading.Thread(target=f).start()
+
+        def spawn(f):
+            threading.Thread(target=f).start()
 
 
 def listen_thread():
@@ -64,7 +68,7 @@ def shutdown_listener():
     socket = ctx.socket(zmq.REQ)
     socket.connect('tcp://localhost:%s' % config.ZEROMQ_PORT)
     socket.send('KILL')
-    _ = socket.recv() # ignore reply
+    socket.recv()  # ignore reply
 
 
 def send_update(update):

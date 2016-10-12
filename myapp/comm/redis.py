@@ -19,11 +19,15 @@ except ImportError:
         import gevent.monkey
         print 'Using gevent for threading'
         gevent.monkey.patch_all()
-        spawn = lambda f: gevent.Greenlet(f).start()
+
+        def spawn(f):
+            gevent.Greenlet(f).start()
     except ImportError:
         import threading
         print 'Using threading'
-        spawn = lambda f: threading.Thread(target=f).start()
+
+        def spawn(f):
+            threading.Thread(target=f).start()
 
 
 def listen_thread():
