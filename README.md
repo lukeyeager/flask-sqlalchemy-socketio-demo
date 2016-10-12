@@ -23,7 +23,7 @@ There are three options for the asynchronous backend framework:
 There are three options for the worker-server communication method:
 
 1. SocketIO
-  * `pip install socketIO_client`
+  * `pip install socketio-client`
 2. Redis
   * `pip install redis`
 3. ZeroMQ
