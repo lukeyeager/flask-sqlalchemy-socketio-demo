@@ -18,6 +18,11 @@ install:
     - pip install socketio-client
     - echo $THREADING | xargs -r pip install
 
-script:
+before_script:
     - python -m flake8 .
-    - ./manage.py --help
+    - ./manage.py db init
+    - ./manage.py db migrate
+    - ./manage.py db upgrade
+
+script:
+    - nosetests .

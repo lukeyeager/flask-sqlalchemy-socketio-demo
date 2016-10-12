@@ -9,12 +9,19 @@ blueprint = flask.Blueprint(__name__, __name__)
 
 
 @blueprint.route('/')
+@blueprint.route('/index')
 def index():
     updates = Update.query.all()
     return flask.render_template('index.html', updates=updates)
 
 
-@blueprint.route('/delete')
+@blueprint.route('/index.json')
+def index_json():
+    updates = Update.query.all()
+    return flask.jsonify({'updates': [str(u) for u in updates]})
+
+
+@blueprint.route('/delete', methods=['GET', 'POST'])
 def delete():
     Update.query.delete()
     db.session.commit()

@@ -46,4 +46,7 @@ def delete():
 
 
 if __name__ == '__main__':
-    manager.run()
+    try:
+        manager.run()
+    except KeyboardInterrupt:
+        pass
