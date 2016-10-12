@@ -1,4 +1,7 @@
 # flask-sqlalchemy-socketio-demo
+
+[![Build Status](https://travis-ci.org/lukeyeager/flask-sqlalchemy-socketio-demo.svg?branch=master)](https://travis-ci.org/lukeyeager/flask-sqlalchemy-socketio-demo)
+
 Demo for how to use Flask, SQLAlchemy and SocketIO together
 
 ### Setup
