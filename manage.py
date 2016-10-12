@@ -1,7 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
-from flask.ext import migrate as flask_migrate
-from flask.ext import script as flask_script
+import flask_migrate
+import flask_script
 
 from myapp.comm import send_update
 from myapp.database import models
@@ -30,11 +30,11 @@ def runserver(debug=False, use_reloader=False):
 def add():
     u = Update(msg='Added from command-line')
     with webapp.app_context():
-        print 'Committing to database ...'
+        print('Committing to database ...')
         db.session.add(u)
         db.session.commit()
         send_update(u)
-    print 'Added.'
+    print('Added.')
 
 
 @manager.command
@@ -42,7 +42,7 @@ def delete():
     with webapp.app_context():
         models.Update.query.delete()
         db.session.commit()
-    print 'Deleted all updates.'
+    print('Deleted all updates.')
 
 
 if __name__ == '__main__':

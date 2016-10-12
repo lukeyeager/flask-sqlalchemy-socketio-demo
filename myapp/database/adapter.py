@@ -1,5 +1,5 @@
 from __future__ import absolute_import
 
-from flask.ext import sqlalchemy as sa
+import flask_sqlalchemy as sa
 
 db = sa.SQLAlchemy()

@@ -10,7 +10,7 @@ from myapp.webserver.socketio import socketio
 try:
     import eventlet
     from eventlet.green import zmq
-    print 'Using eventlet'
+    print('Using eventlet')
     eventlet.monkey_patch()
     spawn = eventlet.spawn
 except ImportError:
@@ -18,7 +18,7 @@ except ImportError:
         import gevent
         import gevent.monkey
         import zmq.green as zmq
-        print 'Using gevent'
+        print('Using gevent')
         gevent.monkey.patch_all()
 
         def spawn(f):
@@ -26,7 +26,7 @@ except ImportError:
     except ImportError:
         import threading
         import zmq
-        print 'Using threading'
+        print('Using threading')
 
         def spawn(f):
             threading.Thread(target=f).start()
@@ -39,17 +39,17 @@ def listen_thread():
     socket.bind('tcp://*:%s' % config.ZEROMQ_PORT)
     while True:
         request = socket.recv()
-        print 'ZEROMQ request -', request
+        print('ZEROMQ request -', request)
         socket.send('OK')
 
         if request == 'KILL':
             socket.close()
-            print 'Socket closed.'
+            print('Socket closed.')
             break
 
         with webapp.app_context():
             data = json.loads(request)
-            print 'Sending to SocketIO ...'
+            print('Sending to SocketIO ...')
             socketio.emit(
                 'new_update',
                 data['msg'] + ' at ' + data['timestamp'],
@@ -80,4 +80,4 @@ def send_update(update):
     socket.connect('tcp://localhost:%s' % config.ZEROMQ_PORT)
     socket.send(json.dumps(data))
     reply = socket.recv()
-    print 'ZEROMQ reply -', reply
+    print('ZEROMQ reply -', reply)

@@ -10,21 +10,21 @@ from myapp.webserver.socketio import socketio
 
 try:
     import eventlet
-    print 'Using eventlet for threading'
+    print('Using eventlet for threading')
     eventlet.monkey_patch()
     spawn = eventlet.spawn
 except ImportError:
     try:
         import gevent
         import gevent.monkey
-        print 'Using gevent for threading'
+        print('Using gevent for threading')
         gevent.monkey.patch_all()
 
         def spawn(f):
             gevent.Greenlet(f).start()
     except ImportError:
         import threading
-        print 'Using threading'
+        print('Using threading')
 
         def spawn(f):
             threading.Thread(target=f).start()
@@ -37,10 +37,10 @@ def listen_thread():
     for item in pubsub.listen():
         if item['data'] == "KILL":
             pubsub.unsubscribe()
-            print 'REDIS - unsubscribed and finished'
+            print('REDIS - unsubscribed and finished')
             break
         elif item['data'] != 1:
-            print 'REDIS -', item['channel'], ":", item['data']
+            print('REDIS -', item['channel'], ":", item['data'])
             with webapp.app_context():
                 data = json.loads(item['data'])
                 socketio.emit(
@@ -66,4 +66,4 @@ def send_update(update):
         config.REDIS_CHANNEL,
         json.dumps(data),
     )
-    print 'REDIS - published ', update
+    print('REDIS - published ', update)

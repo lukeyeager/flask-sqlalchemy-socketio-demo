@@ -7,7 +7,7 @@ from myapp.webserver.socketio import socketio as socketio_server
 
 @socketio_server.on('worker update', namespace='/worker')
 def worker_request(data):
-    print 'SocketIO worker update -', data
+    print('SocketIO worker update -', data)
     socketio_server.emit(
         'new_update',
         data['msg'] + ' at ' + data['timestamp'],
@@ -20,4 +20,4 @@ def send_update(update):
 
     with socketIO_client.SocketIO('localhost', 5000) as socketio_client:
         socketio_client.emit('worker update', data, path='/worker')
-        print 'SocketIO - sent'
+        print('SocketIO - sent')
